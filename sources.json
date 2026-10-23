@@ -1,0 +1,17 @@
+{
+  "manifest": {
+    "url": "https://github.com/TWRP-Test/platform_manifest_twrp_aosp.git",
+    "revision": "814b553116ceedde197f70389cff9661d81d8337"
+  },
+  "projects": [
+    {"name": "android_bootable_recovery", "path": "bootable/recovery", "revision": "fb0349d710c6eee6bdf1a74b36a0401803bf3f9f"},
+    {"name": "android_external_lvgl", "path": "external/lvgl", "revision": "28714550785a8bb620da697346eb6c8c5f61b7ec"},
+    {"name": "android_external_libvpx", "path": "external/libvpx", "revision": "b8cba757f9e2587726547adc1b4e790129b338e2"},
+    {"name": "android_external_libwebm", "path": "external/libwebm", "revision": "99fcd14602ba76998d086b602f29a243e1d5c835"}
+  ],
+  "device": {
+    "name": "twrp_device_xiaomi_sm8850",
+    "path": "device/xiaomi/sm8850",
+    "revision": "8023035649595341e26f9b924928c0b0cd67fbd2"
+  }
+}
