@@ -21,17 +21,30 @@ case "${1:-}" in
     cp "${lock_file}" "${dist_root}/sources.json"
     git -C bootable/recovery diff --check
     df -h "${source_root}"
+    du -sh .repo
+    available_kib="$(df -Pk "${source_root}" | awk 'NR == 2 {print $4}')"
+    if (( available_kib < 15 * 1024 * 1024 )); then
+      echo '::error::Less than 15 GiB remains after source sync; refusing to fill the runner disk.'
+      exit 1
+    fi
     ;;
   build)
     cd "${source_root}"
     export ALLOW_MISSING_DEPENDENCIES=true
     export USE_CCACHE=0
     export MALLOC_ARENA_MAX=2
+    # Soong sanitizes its child environment. Use its explicit forwarding option.
+    export SOONG_GOMEMLIMIT=8GiB
+    export GOMEMLIMIT=8GiB
+    export GOGC=50
+    export GOMAXPROCS=2
+    export SOONG_UI_NINJA_ARGS=-j1
+    export NINJA_HIGHMEM_NUM_JOBS=1
     set +u
     source build/envsetup.sh
     lunch twrp_sm8850
-    mka installclean
-    mka -j"${BUILD_JOBS:-4}" recoveryimage
+    mka -j"${BUILD_JOBS:-2}" installclean
+    mka -j"${BUILD_JOBS:-2}" recoveryimage
     ;;
   package)
     product_root="${source_root}/out/target/product/sm8850"

@@ -27,3 +27,17 @@ particular installed firmware.
 
 Upstream code is fetched from its original repositories and retains its original
 licenses. Disk preparation runs only on the disposable GitHub-hosted Linux runner.
+
+## Hosted runner resource limits
+
+The first run lost its runner connection during the build; GitHub did not retain
+a compiler failure log. Resource exhaustion is a possibility, not a confirmed
+diagnosis. The workflow now uses the existing root filesystem instead of LVM
+loop images, frees unused preinstalled SDKs, and allocates 16 GiB of swap. It
+requires 95 GiB free before source sync and 15 GiB afterwards.
+
+Builds use two jobs, a single Soong bootstrap job, and the upstream
+`SOONG_GOMEMLIMIT=8GiB` option. A systemd scope caps build RAM at 13 GiB and swap
+at 12 GiB to leave resources for the Actions agent. Resource reports are written
+every minute by the runner; no external polling is required. A disk guard stops
+the build below 3 GiB free so diagnostic logs can still upload.
